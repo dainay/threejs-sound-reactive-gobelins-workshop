@@ -25,6 +25,9 @@ class VitrageScene {
 		this.lastKick = 0
 		this.beatDuration = 0.5
 
+		//moved figures
+		this.animalsMoved = false
+
 		//models
 		this.glassModel = null
 		this.wallsModel = null
@@ -79,11 +82,11 @@ class VitrageScene {
 		this.DeerMixer = null
 		this.DeerMaterials = []
 		this.DeerVisible = false
-		
+
 		this.lastDeerStartTime = -999
 
 		this.Bird = null
-		this.BirdAnimations = null 
+		this.BirdAnimations = null
 		this.BirdIdle = null
 		this.BirdKick = null
 		this.BirdMixer = null
@@ -110,7 +113,7 @@ class VitrageScene {
 		this.lastTime = 0
 		this.waitingForKickMove = false
 		this.kickMoveStarted = false
-		this.startParticles = false 
+		this.startParticles = false
 	}
 
 
@@ -190,7 +193,7 @@ class VitrageScene {
 			loader.loadAsync('./models/walls3.glb'),
 			loader.loadAsync('./models/rays.glb'),
 			loader.loadAsync('./models/Deer.glb'),
-			loader.loadAsync('./models/Bird.glb'), 
+			loader.loadAsync('./models/Bird.glb'),
 			loader.loadAsync('./models/Fish.glb'),
 
 		])
@@ -198,13 +201,13 @@ class VitrageScene {
 		this.glassModel = glass.scene
 		this.wallsModel = walls.scene
 		this.raysModel = rays.scene
-		
+
 		this.Deer = Deer.scene
-		this.DeerAnimations = Deer.animations  
-		this.Bird = Bird.scene 
+		this.DeerAnimations = Deer.animations
+		this.Bird = Bird.scene
 		this.BirdAnimations = Bird.animations
 		console.log('this.BirdAnimations', this.BirdAnimations)
-		this.Fish = Fish.scene 
+		this.Fish = Fish.scene
 		this.FishAnimations = Fish.animations
 	}
 
@@ -253,7 +256,7 @@ class VitrageScene {
 
 		this.scene.background = new THREE.Color('#020403')
 
-		 
+
 		this.scene.fog =
 			new THREE.Fog(
 				'#020403',
@@ -496,7 +499,7 @@ class VitrageScene {
 				glowStrength: 0.2,
 				colorA: '#cfff6b',
 				colorB: '#155523',
-				saturation: 0.7,
+				saturation: 0.95,
 				flashColor: '#8cb495',
 				opacity: 0.98,
 			}, this.vertexGlass, this.fragmentGlass),
@@ -530,7 +533,7 @@ class VitrageScene {
 			obj.receiveShadow = false
 		})
 
-		this.glassModel.scale.set(1, 1.05, 1)
+		this.glassModel.scale.set(1, 1.0, 1)
 
 		this.scene.add(this.glassModel, this.wallsModel)
 
@@ -618,14 +621,14 @@ class VitrageScene {
 		//
 		//--------------------------------------------
 
-		
+
 		this.Deer.position.set(2.4, -2, -3.9)
 		this.Deer.rotation.x = Math.PI / 2
 		this.Deer.scale.set(1.1, 1.1, 1.1)
 		// this.Deer.visible = this.DeerVisible
 		this.scene.add(this.Deer)
 
-		 // animation
+		// animation
 		this.DeerMixer = new THREE.AnimationMixer(this.Deer)
 
 		this.DeerIdle = this.DeerMixer.clipAction(
@@ -638,26 +641,26 @@ class VitrageScene {
 
 
 		this.DeerKick = this.DeerMixer.clipAction(
-		this.DeerAnimations[1]
+			this.DeerAnimations[1]
 		)
 		this.DeerKick.timeScale = 1.5
 		this.DeerKick.setLoop(THREE.LoopOnce)
-		this.DeerAnimDuration = this.DeerKick.getClip().duration 
+		this.DeerAnimDuration = this.DeerKick.getClip().duration
 
-	
-		
+
+
 		// emission
 		this.Deer.traverse((child) => {
 			if (!child.isMesh) return
 
 			child.material.emissiveMap = child.material.map
 			child.material.emissive = new THREE.Color(0xffffff)
-			child.material.emissiveIntensity = 20 
+			child.material.emissiveIntensity = 0.8
 			child.material.needsUpdate = true
 
 			this.DeerMaterials.push(child.material)
 		})
- 
+
 		//--------------------------------------------
 		//
 		// --- Bird ---
@@ -670,32 +673,32 @@ class VitrageScene {
 		// this.Bird.visible = this.BirdVisible
 		this.scene.add(this.Bird)
 
-		 // animation
+		// animation
 		this.BirdMixer = new THREE.AnimationMixer(this.Bird)
 
 		this.BirdIdle = this.BirdMixer.clipAction(
 			this.BirdAnimations[0]
 		)
 		this.BirdIdle.setLoop(THREE.LoopRepeat)
-		this.BirdIdle.timeScale = 1 
+		this.BirdIdle.timeScale = 1
 		this.BirdIdle.weight = 1
 		this.BirdIdle.play()
 
 
 		this.BirdKick = this.BirdMixer.clipAction(
-		this.BirdAnimations[1]
+			this.BirdAnimations[1]
 		)
 		this.BirdKick.timeScale = 3.5
 		this.BirdKick.setLoop(THREE.LoopOnce)
-		this.BirdAnimDuration = this.BirdKick.getClip().duration 
-		
+		this.BirdAnimDuration = this.BirdKick.getClip().duration
+
 		// emission
 		this.Bird.traverse((child) => {
 			if (!child.isMesh) return
 
 			child.material.emissiveMap = child.material.map
 			child.material.emissive = new THREE.Color(0xffffff)
-			child.material.emissiveIntensity = 0
+			child.material.emissiveIntensity = 0.8
 			child.material.needsUpdate = true
 
 			this.BirdMaterials.push(child.material)
@@ -713,9 +716,9 @@ class VitrageScene {
 		// this.Fish.visible = this.FishVisible
 		this.scene.add(this.Fish)
 
-		
-		 // animation
-		 	this.FishMixer = new THREE.AnimationMixer(this.Fish)
+
+		// animation
+		this.FishMixer = new THREE.AnimationMixer(this.Fish)
 
 		this.FishIdle = this.FishMixer.clipAction(
 			this.FishAnimations[0]
@@ -727,19 +730,19 @@ class VitrageScene {
 
 
 		this.FishKick = this.FishMixer.clipAction(
-		this.FishAnimations[1]
+			this.FishAnimations[1]
 		)
 		this.FishKick.timeScale = 5
 		this.FishKick.setLoop(THREE.LoopOnce)
-		this.FishAnimDuration = this.FishKick.getClip().duration 
-		
+		this.FishAnimDuration = this.FishKick.getClip().duration
+
 		// emission
 		this.Fish.traverse((child) => {
 			if (!child.isMesh) return
 
 			child.material.emissiveMap = child.material.map
 			child.material.emissive = new THREE.Color(0xffffff)
-			child.material.emissiveIntensity = 0
+			child.material.emissiveIntensity = 0.8
 			child.material.needsUpdate = true
 
 			this.FishMaterials.push(child.material)
@@ -770,7 +773,36 @@ class VitrageScene {
 				this.bloomPass.setSize(width, height)
 			}
 		})
+
 	}
+
+	moveAnimalsOnce() {
+		if (this.animalsMoved) return
+
+		this.animalsMoved = true
+
+		gsap.to(this.Deer.position, {
+			y: 1.1,
+			z: -3.46,
+			duration: 0.2,
+			ease: 'sine.in',
+		})
+
+		gsap.to(this.Bird.position, {
+			y: 1,
+			z: -3.46,
+			duration: 0.2,
+			ease: 'sine.in',
+		})
+
+		gsap.to(this.Fish.position, {
+			y: 1,
+			z: -3.46,
+			duration: 0.2,
+			ease: 'sine.in',
+		})
+	}
+
 
 	warmup() {
 	}
@@ -789,12 +821,12 @@ class VitrageScene {
 		const time = t / 1000
 		const delta = this.lastTime ? time - this.lastTime : 0
 		this.lastTime = time
- 
-		if(this.DeerMixer)
+
+		if (this.DeerMixer)
 			this.DeerMixer.update(delta)
-		if(this.BirdMixer)
+		if (this.BirdMixer)
 			this.BirdMixer.update(delta)
-		if(this.FishMixer)
+		if (this.FishMixer)
 			this.FishMixer.update(delta)
 
 		//------------------------------------------------
@@ -835,7 +867,7 @@ class VitrageScene {
 				this.BirdKick.reset()
 				// this.BirdKick.setEffectiveWeight(1)
 				// this.BirdKick.fadeIn(0.05)
-				this.BirdKick.play() 
+				this.BirdKick.play()
 
 				this.lastBirdStartTime = time
 			}
@@ -868,7 +900,7 @@ class VitrageScene {
 			const u = material.uniforms
 
 			u.uTime.value = time
-			u.uVolume.value = a.volumeSmooth 
+			u.uVolume.value = a.volumeSmooth
 
 			u.uFlash.value = Math.max(
 				u.uFlash.value * 0.88,
@@ -882,37 +914,37 @@ class VitrageScene {
 
 		this.DeerEmission = a.volumeSmooth
 
-		this.DeerMaterials.forEach((material) => {
-		material.emissiveIntensity =
-			THREE.MathUtils.lerp(
-			material.emissiveIntensity,
-			this.DeerEmission,
-			0.005
-			)
-		})
+		// this.DeerMaterials.forEach((material) => {
+		// material.emissiveIntensity =
+		// 	THREE.MathUtils.lerp(
+		// 	material.emissiveIntensity,
+		// 	this.DeerEmission,
+		// 	0.005
+		// 	)
+		// })
 
-		this.BirdEmission = a.volumeSmooth
- 
+		// this.BirdEmission = a.volumeSmooth
 
-		this.BirdMaterials.forEach((material) => {
-		material.emissiveIntensity =
-			THREE.MathUtils.lerp(
-			material.emissiveIntensity,
-			this.BirdEmission,
-			0.05
-			)
-		})
 
-		this.FishEmission = a.volumeSmooth
+		// this.BirdMaterials.forEach((material) => {
+		// material.emissiveIntensity =
+		// 	THREE.MathUtils.lerp(
+		// 	material.emissiveIntensity,
+		// 	this.BirdEmission,
+		// 	0.05
+		// 	)
+		// })
 
-		this.FishMaterials.forEach((material) => {
-		material.emissiveIntensity =
-			THREE.MathUtils.lerp(
-			material.emissiveIntensity,
-			this.FishEmission,
-			0.05
-			)
-		})
+		// this.FishEmission = a.volumeSmooth
+
+		// this.FishMaterials.forEach((material) => {
+		// material.emissiveIntensity =
+		// 	THREE.MathUtils.lerp(
+		// 	material.emissiveIntensity,
+		// 	this.FishEmission,
+		// 	0.05
+		// 	)
+		// })
 
 
 
@@ -923,7 +955,7 @@ class VitrageScene {
 		const isKickHard = a.kickHard > 0.5
 
 		let commonParticlesCount = 10 + 10 * Math.floor(a.kick * 10)
-// console.log('commonParticlesCount', commonParticlesCount)
+		// console.log('commonParticlesCount', commonParticlesCount)
 
 		if (isKickHard && !this.lastKickHard && this.startParticles) {
 
@@ -1083,6 +1115,7 @@ class VitrageScene {
 	createTimeline() {
 		const tl = gsap.timeline({
 			paused: true,
+			repeat: -1,
 			defaults: {
 				ease: 'power2.inOut',
 			},
@@ -1102,7 +1135,7 @@ class VitrageScene {
 			this.key,
 			{
 				intensity: 1,
-				duration: 5,
+				duration: 7,
 				ease: 'sine.inOut',
 			},
 			0
@@ -1127,10 +1160,10 @@ class VitrageScene {
 			this.camera.position,
 			{
 				x: -7,
-				y: 3.2,
-				z: 5,
-				duration: 8,
-				 ease: "none",
+				y: 5,
+				z: 7,
+				duration: 6,
+				ease: "power2.inOut",
 			},
 			'0'
 		)
@@ -1177,25 +1210,51 @@ class VitrageScene {
 			this.camera.position,
 			{
 				x: 0,
-				y: 3.2,
-				z: 0.5,
-				duration: 6,
-				 ease: "none",
+				y: 10,
+				z: 22.5,
+				duration: 0.5,
+				ease: "power2.inOut",
 			},
-			'>-=0'
+			'>'
 		)
 
 		tl.to(
 			this,
 			{
-				startParticles: true, 
+				startParticles: true,
 			},
-			'<'
+			'>=+2'
 		)
- 
+		tl.to(
+			this.camera.position,
+			{
+				x: 12,
+				y: 3,
+				z: 5,
+				duration: 3,
+				ease: "power2.inOut",
+			},
+			'>'
+		)
+
+		tl.to(
+			this.controls.target,
+			{
+				x: -0.2,
+				y: 10,
+				z: 0,
+				duration: 4,
+				ease: 'power2.out',
+				onUpdate: () => this.controls.update(),
+			},
+			'>=+2'
+		)
+
+
+
 		tl.to(
 			this.Deer,
-			{ 
+			{
 				visible: true
 			},
 			'+=2'
@@ -1203,7 +1262,7 @@ class VitrageScene {
 
 		tl.to(
 			this.Bird,
-			{ 
+			{
 				visible: true
 			},
 			'+=2'
@@ -1211,157 +1270,401 @@ class VitrageScene {
 
 		tl.to(
 			this.Fish,
-			{ 
+			{
 				visible: true
 			},
 			'+=1'
 		)
 
 
-			// tl.to(
-		// 	this.camera.position,
-		// 	{
-		// 		x: 10,
-		// 		y: 3.2,
-		// 		z: 5,
-		// 		duration: 7,
-		// 		 ease: "none",
-		// 	},
-		// 	'>'
-		// )
+
 
 
 		//-------------------------------
 		// 3. Flying to top
 		//-------------------------------
 
-		// tl.to(
-		// 	this.camera.position,
-		// 	{
-		// 		x: 0,
-		// 		y: 9,
-		// 		z: 4,
-		// 		duration: 3,
-		// 		ease: 'power2.inOut',
-		// 	},
-		// 	'+=2'
-		// )
+		tl.to(
+			this.camera.position,
+			{
+				x: 0,
+				y: 9,
+				z: 4,
+				duration: 3,
+				ease: 'power2.inOut',
+			},
+			'>=-8'
+		)
 
-		// tl.to(
-		// 	this.controls.target,
-		// 	{
-		// 		x: -0.2,
-		// 		y: 10,
-		// 		z: 0,
-		// 		duration: 3,
-		// 		ease: 'power2.out',
-		// 		onUpdate: () => this.controls.update(),
-		// 	},
-		// 	'<+0.5'
-		// )
+		tl.to(
+			this.controls.target,
+			{
+				x: -0.2,
+				y: 10,
+				z: 0,
+				duration: 3,
+				ease: 'power2.out',
+				onUpdate: () => this.controls.update(),
+			},
+			'<+0.5'
+		)
 
 		//-------------------------------
 		// 4. turn camera around
 		//-------------------------------
 
-		// const roll = {
-		// 	value: 0
-		// }
+		const roll = {
+			value: 0
+		}
 
-		// tl.to(
-		// 	roll,
-		// 	{
-		// 		value: Math.PI * 6,
-		// 		ease: 'power2.inOut',
-		// 		duration: 2.5,
+		tl.to(
+			roll,
+			{
+				value: Math.PI * 4,
+				ease: 'power2.in',
+				duration: 4,
 
-		// 		onUpdate: () => {
+				onUpdate: () => {
 
-		// 			this.camera.up.set(
-		// 				Math.sin(roll.value),
-		// 				Math.cos(roll.value),
-		// 				0
-		// 			)
+					this.camera.up.set(
+						Math.sin(roll.value),
+						Math.cos(roll.value),
+						0
+					)
 
-		// 			this.controls.update()
-		// 		},
-		// 	},
-		// 	'<+4'
-		// )
+					this.controls.update()
+				},
+			},
+			'<+3'
+		)
+
+		const roll2 = {
+			value: 0
+		}
+
+		tl.to(
+			roll2,
+			{
+				value: Math.PI * 6,
+				ease: 'power2.out',
+				duration: 3,
+
+				onUpdate: () => {
+
+					this.camera.up.set(
+						Math.sin(roll2.value),
+						Math.cos(roll2.value),
+						0
+					)
+
+					this.controls.update()
+				},
+			},
+			'>=-1'
+		)
+
 
 		//-------------------------------
 		// 5.return back
 		//-------------------------------
 
+		Object.values(this.glassMaterials).forEach((material, index) => {
+			tl.to(
+				material.uniforms.uOpacity,
+				{
+					value: 0.1,
+					duration: 0.002,
+					ease: 'ease2.inOut',
+				},
+				'<'
+			)
+		})
 
-		// tl.to(
-		// 	this.camera.position,
-		// 	{
-		// 		x: 0,
-		// 		y: 1,
-		// 		z: 17,
-		// 		duration: 5,
-		// 		ease: 'power2.out',
-		// 	},
-		// 	'<'
-		// )
+		tl.to(
+			this.camera.position,
+			{
+				x: 0,
+				y: 1,
+				z: 17,
+				duration: 7,
+				ease: 'power2.out',
+			},
+			'<=-2'
+		)
 
 
-		// tl.to(
-		// 	this.controls.target,
-		// 	{
-		// 		x: 0,
-		// 		y: 4,
-		// 		z: 0,
-		// 		duration: 5,
-		// 		ease: 'power2.inOut',
-		// 		onUpdate: () => this.controls.update(),
-		// 	},
-		// 	'<'
-		// )
+		tl.to(
+			this.controls.target,
+			{
+				x: 0,
+				y: 4,
+				z: 0,
+				duration: 5,
+				ease: 'power2.inOut',
+				onUpdate: () => this.controls.update(),
+			},
+			'>=-4'
+		)
 
 
 		//-------------------------------
 		// 6.little move at the end
 		//-------------------------------
 
-		// tl.to(
-		// 	this.camera.position,
-		// 	{
-		// 		x: 0,
-		// 		y: 6,
-		// 		z: 17,
-		// 		duration: 4,
-		// 		ease: 'sine.in',
-		// 	},
-		// 	'>-1'
-		// )
+		tl.to(
+			this.camera.position,
+			{
+				x: 0,
+				y: 6,
+				z: 17,
+				duration: 4,
+				ease: 'sine.in',
+			},
+			'>=-4'
+		)
+		//-------------------------------
+		// 6.EveryGlass
+		//-------------------------------
 
-		// tl.to(
-		// 	this.camera.position,
-		// 	{
-		// 		x: 0,
-		// 		y: 0.5,
-		// 		z: 3,
-		// 		duration: 6,
-		// 		ease: 'sine.inOut',
-		// 	},
-		// 	'>'
-		// )
 
-		// tl.to(
-		// 	this.controls.target,
-		// 	{
-		// 		x: 0,
-		// 		y: 1.5,
-		// 		z: 0,
-		// 		duration: 5,
-		// 		ease: 'sine.inOut',
-		// 		onUpdate: () => this.controls.update(),
-		// 	},
-		// 	'<'
-		// )
+		tl.call(
+			() => this.moveAnimalsOnce(),
+			null,
+			'>'
+		)
 
+
+
+		tl.to(
+			this.camera.position,
+			{
+				x: 3,
+				y: 3,
+				z: 2.5,
+				duration: 0.2,
+				ease: 'sine.in',
+			},
+			'<'
+		)
+
+		tl.to(
+			this.controls.target,
+			{
+				x: 3,
+				y: 2.8,
+				z: 0,
+				duration: 0.2,
+				ease: 'power2.inOut',
+				onUpdate: () => this.controls.update(),
+			},
+			'<'
+		)
+
+		tl.to(
+			this.point,
+			{
+				intensity: 0,
+				duration: 0.2,
+				ease: 'sine.inOut',
+			},
+			'<'
+		)
+
+		tl.to(
+			this.key,
+			{
+				intensity: 0,
+				duration: 0.2,
+				ease: 'sine.inOut',
+			},
+			'<'
+		)
+
+
+
+
+		//SLIDING CAMERA BACK TO THE START
+
+		tl.to(
+			this.camera.position,
+			{
+				x: -2,
+				duration: 5,
+				ease: 'sine.inOut',
+			},
+			'>=+1'
+		)
+
+		tl.to(
+			this.controls.target,
+			{
+				x: -2,
+				duration: 5,
+				ease: 'sine.inOut',
+				onUpdate: () => this.controls.update(),
+			},
+			'<'
+		)
+
+
+
+
+		//back
+
+		//details
+
+		//DEER LEG
+		tl.to(
+			this.camera.position,
+			{
+				x: 3,
+				z: -1.8,
+				y: 1.5,
+				duration: 0.5,
+				ease: 'sine.inOut',
+			},
+			'>=+1'
+		)
+
+		tl.to(
+			this.controls.target,
+			{
+				x: 2.3,
+				y: 1.5,
+				z: -3.8,
+				duration: 0.2,
+				ease: 'power2.inOut',
+				onUpdate: () => this.controls.update(),
+			},
+			'<'
+		)
+
+		//FISH HEAD
+		tl.to(
+			this.camera.position,
+			{
+				x: -2.8,
+				z: -1.2,
+				y: 3.2,
+				duration: 0.5,
+				ease: 'sine.inOut',
+			},
+			'>=+2'
+		)
+
+		tl.to(
+			this.controls.target,
+			{
+				x: -2.4,
+				y: 3,
+				z: -3.2,
+				duration: 0.2,
+				ease: 'power2.inOut',
+				onUpdate: () => this.controls.update(),
+			},
+			'<'
+		)
+
+		//BIRD HEAD
+		tl.to(
+			this.camera.position,
+			{
+				x: 0,
+				z: -1.8,
+				y: 2.5,
+				duration: 0.5,
+				ease: 'sine.inOut',
+			},
+			'>=+2'
+		)
+
+		tl.to(
+			this.controls.target,
+			{
+				x: 0,
+				y: 3.1,
+				z: -3.8,
+				duration: 0.2,
+				ease: 'power2.inOut',
+				onUpdate: () => this.controls.update(),
+			},
+			'<'
+		)
+
+
+		tl.to(
+			this.camera.position,
+			{
+				x: 0,
+				z: 10,
+				y: 7,
+				duration: 5,
+				ease: 'sine.inOut',
+			},
+			'>=+2'
+		)
+
+		tl.to(
+			this.controls.target,
+			{
+				x: 0,
+				y: 3,
+				duration: 5,
+				ease: 'sine.inOut',
+				onUpdate: () => this.controls.update(),
+			},
+			'<'
+		)
+
+		Object.values(this.glassMaterials).forEach((material, index) => {
+			tl.to(
+				material.uniforms.uOpacity,
+				{
+					value: 0.98,
+					duration: 0.002,
+					ease: 'ease2.inOut',
+				},
+				'<'
+			)
+		})
+
+		//start position
+
+		tl.to(
+			this.camera.position,
+			{
+				x: 0,
+				y: 0.5,
+				z: 17,
+				duration: 2,
+				ease: 'sine.inOut',
+			},
+			'>=+5'
+		)
+
+		tl.to(
+			this.key,
+			{
+				intensity: 1,
+				duration: 2,
+				ease: 'sine.inOut',
+			},
+			'<'
+		)
+
+
+		tl.to(
+			this.controls.target,
+			{
+				x: 0,
+				y: 3,
+				z: -2,
+				duration: 2,
+				ease: 'sine.inOut',
+				onUpdate: () => this.controls.update(),
+			},
+			'<'
+		)
 	}
 }
 
